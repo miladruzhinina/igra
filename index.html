@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>С тобой всё в порядке</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- ЭКРАН 0: Приветственный -->
+    <div class="screen active" id="screen-welcome">
+      <div class="welcome-bg"></div>
+      <div class="welcome-content">
+        <div class="firefly-icon">
+          <img src="svetliachok.png" alt="Светлячок" class="firefly-img" />
+        </div>
+        <h1 class="welcome-title">С тобой всё<br>в порядке</h1>
+        <p class="welcome-subtitle">Игра-самопомощь<br>в подходе ОРКТ</p>
+        <div class="welcome-actions">
+          <button class="btn btn-primary" onclick="startGame()">Начать игру</button>
+          <button class="btn btn-ghost" onclick="showRules()">Правила</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ЭКРАН: Правила -->
+    <div class="screen" id="screen-rules">
+      <div class="screen-header">
+        <button class="btn-back" onclick="goBack('screen-welcome')" aria-label="Назад">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
+        </button>
+        <h2 class="screen-title">Правила</h2>
+        <div style="width:40px"></div>
+      </div>
+      <div class="screen-body rules-body">
+        <div class="rules-section">
+          <h3>Как играть самостоятельно</h3>
+          <p>В этой игре нет правильных ответов и таймеров. Отвечай честно или коротко — как сейчас получается. Если вопрос не откликается — вытяни другую карту. Все ответы сохранятся, в конце увидишь их все вместе.</p>
+        </div>
+        <div class="rules-section">
+          <h3>Как играть с партнёром или семьёй</h3>
+          <p>Распечатай PDF-версию — там полная инструкция для игры в компании до 5 человек.</p>
+          <a href="https://teletype.in/@miladruzhinina/WwTjAPTfPad" class="btn btn-outline" target="_blank" rel="noopener">Скачать PDF для печати</a>
+        </div>
+        <div class="rules-section">
+          <h3>Структура игры</h3>
+          <div class="deck-list">
+            <div class="deck-item"><span class="deck-num">1</span><span>Ситуация. Что сейчас происходит</span></div>
+            <div class="deck-item"><span class="deck-num">2</span><span>Предпочитаемое будущее. Как хочется</span></div>
+            <div class="deck-item"><span class="deck-num">3</span><span>Точка отсчёта. Где я сейчас</span></div>
+            <div class="deck-item"><span class="deck-num">4</span><span>Светлые моменты. Что уже получается</span></div>
+            <div class="deck-item"><span class="deck-num">5</span><span>Опора. Что поддерживает</span></div>
+            <div class="deck-item"><span class="deck-num">6</span><span>Подарки. Что во мне ценного</span></div>
+            <div class="deck-item"><span class="deck-num">7</span><span>Микро-шаг. Что можно сделать</span></div>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="startGame()">Начать игру</button>
+      </div>
+    </div>
+
+    <!-- ЭКРАНЫ 1–5: Колоды с картами -->
+    <div class="screen" id="screen-deck">
+      <div class="screen-header">
+        <button class="btn-back" id="deck-back-btn" aria-label="Назад">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
+        </button>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <button class="btn-rules-mini" onclick="showRulesFromGame()" aria-label="Правила">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        </button>
+      </div>
+      <div class="screen-body deck-body">
+        <div class="step-label" id="deck-step-label"></div>
+        <h2 class="deck-title" id="deck-title"></h2>
+        <p class="deck-hint" id="deck-hint"></p>
+        <p class="deck-tap-hint" id="deck-tap-hint">↓ Нажми на карту, чтобы открыть</p>
+
+        <!-- Карта -->
+        <div class="card-area" id="card-area">
+          <div class="card" id="card" onclick="drawCard()">
+            <div class="card-inner" id="card-inner">
+              <div class="card-back" id="card-back-img">
+                <img class="card-back-image" id="card-back-image" src="" alt="Рубашка карты" />
+                <span class="card-tap-hint-overlay">Нажми, чтобы открыть карту</span>
+              </div>
+              <div class="card-front" id="card-front">
+                <p class="card-text" id="card-text"></p>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-ghost btn-sm" id="btn-another-card" onclick="drawAnotherCard()" style="display:none">
+            Другая карта <span id="another-card-count"></span>
+          </button>
+        </div>
+
+        <!-- Поле ответа -->
+        <div class="answer-area" id="answer-area" style="display:none">
+          <label class="answer-label" for="answer-input">Твой ответ</label>
+          <textarea id="answer-input" class="answer-input" placeholder="Напиши здесь..." rows="3" oninput="checkAnswer()"></textarea>
+        </div>
+
+        <!-- Шкала (только для шага 2) -->
+        <div class="scale-area" id="scale-area" style="display:none">
+          <p class="scale-question">Где ты сейчас на пути к тому, что описал(а)?</p>
+          <p class="scale-hint">0 — всё плохо, 10 — именно так, как хочется</p>
+          <div class="scale-wrap">
+            <span class="scale-label">0</span>
+            <input type="range" class="scale-slider" id="scale-slider" min="0" max="10" value="5" oninput="updateScale(this.value)" onchange="updateScale(this.value)"/>
+            <span class="scale-label">10</span>
+          </div>
+          <div class="scale-value-display" id="scale-value-display">5</div>
+        </div>
+
+        <button class="btn btn-primary btn-next" id="btn-next" onclick="nextStep()" disabled>
+          Дальше <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ЭКРАН 6: Подарки -->
+    <div class="screen" id="screen-gifts">
+      <div class="screen-header">
+        <button class="btn-back" onclick="goToDeck(5)" aria-label="Назад">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
+        </button>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar" style="width:85.7%"></div>
+        </div>
+        <button class="btn-rules-mini" onclick="showRulesFromGame()" aria-label="Правила">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        </button>
+      </div>
+      <div class="screen-body">
+        <div class="step-label">Шаг 6 из 7</div>
+        <h2 class="deck-title">Подарки.<br>Что во мне ценного</h2>
+        <div class="gifts-hint">
+          <p>В групповой игре подарки дарят другие участники. В соло-версии ты делаешь это сам(а). Ответь на один из этих вопросов:</p>
+          <ul class="gifts-questions">
+            <li>Что тебе понадобилось, чтобы справляться с этим?</li>
+            <li>Что бы ты сказал(а) близкому другу в такой же ситуации?</li>
+            <li>Что в тебе уже есть, что помогает двигаться вперёд?</li>
+          </ul>
+        </div>
+        <div class="answer-area">
+          <label class="answer-label" for="gifts-input">Твой ответ</label>
+          <textarea id="gifts-input" class="answer-input" placeholder="Напиши здесь..." rows="4" oninput="checkGifts()"></textarea>
+        </div>
+        <button class="btn btn-primary btn-next" id="btn-gifts-next" onclick="showSummary()" disabled>
+          Дальше <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ЭКРАН 7: Сводка + Микро-шаг -->
+    <div class="screen" id="screen-summary">
+      <div class="screen-header">
+        <button class="btn-back" onclick="showScreen('screen-gifts')" aria-label="Назад">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
+        </button>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar" style="width:100%"></div>
+        </div>
+        <button class="btn-rules-mini" onclick="showRulesFromGame()" aria-label="Правила">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        </button>
+      </div>
+      <div class="screen-body">
+        <div class="step-label">Шаг 7 из 7</div>
+        <h2 class="deck-title summary-title">Вот твой путь</h2>
+        <div class="summary-block" id="summary-block"></div>
+
+        <div class="microstep-section">
+          <p class="microstep-question">Что из этого ты можешь повторить, чтобы продвинуться на 1 балл выше на шкале? Или что небольшое можно сделать в течение 1–2 дней?</p>
+
+          <div class="microstep-card-area" id="microstep-card-area">
+            <div class="hint-card" id="hint-card" style="display:none">
+              <p class="hint-card-text" id="hint-card-text"></p>
+            </div>
+          </div>
+          <button class="btn btn-outline btn-sm" id="btn-hint" onclick="drawHintCard()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><rect x="9" y="1" width="6" height="4" rx="1"/></svg>
+            Подсказка — карта микро-шага
+          </button>
+
+          <div class="answer-area">
+            <label class="answer-label" for="microstep-input">Мой микро-шаг</label>
+            <textarea id="microstep-input" class="answer-input" placeholder="Напиши здесь конкретное небольшое действие..." rows="3" oninput="checkMicrostep()"></textarea>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-next" id="btn-microstep-next" onclick="showFinal()" disabled>
+          Готово <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ФИНАЛЬНЫЙ ЭКРАН -->
+    <div class="screen" id="screen-final">
+      <div class="screen-body final-body">
+        <div class="final-icon">
+          <svg viewBox="0 0 80 80" fill="none" width="56" height="56" aria-hidden="true">
+            <circle cx="40" cy="40" r="32" stroke="currentColor" stroke-width="1.5" opacity="0.3"/>
+            <path d="M26 40l10 10 18-18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h2 class="final-title">Готово.</h2>
+        <div class="final-microstep-wrap">
+          <p class="final-microstep-label">Твой микро-шаг</p>
+          <p class="final-microstep-text" id="final-microstep-text"></p>
+        </div>
+
+        <div class="final-reminder">
+          <p>Поставь себе напоминание через 1–2 дня — чтобы проверить, как идёт.</p>
+        </div>
+
+        <div class="final-actions">
+          <button class="btn btn-outline" onclick="saveAnswers()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Сохранить ответы
+          </button>
+        </div>
+
+        <div class="final-cta">
+          <p>Если захочется разобрать ситуацию глубже — я рядом.</p>
+          <p class="final-cta-price">Пробная сессия: 60–90 минут, 2 250 ₽</p>
+          <div class="final-cta-buttons">
+            <a href="https://max.ru/u/f9LHodD0cOLNnjDdwBZ7CXNI7OWugqdgJM1gH8nl0XkKT82UJm_cwXSnZ3I" class="btn btn-primary" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Написать в Max
+            </a>
+            <a href="https://t.me/m/loWeYMX3ZjM6" class="btn btn-outline" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              Написать в Telegram
+            </a>
+          </div>
+        </div>
+
+        <button class="btn btn-ghost" onclick="restartGame()">Сыграть ещё раз</button>
+      </div>
+    </div>
+
+    <!-- ЭКРАН: Сохранённые ответы -->
+    <div class="screen" id="screen-saved">
+      <div class="screen-header">
+        <button class="btn-back" onclick="showScreen('screen-final')" aria-label="Назад">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
+        </button>
+        <h2 class="screen-title">Твои ответы</h2>
+        <div style="width:40px"></div>
+      </div>
+      <div class="screen-body">
+        <div class="summary-block" id="saved-block"></div>
+        <button class="btn btn-primary" onclick="showScreen('screen-final')">Назад</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="images.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
