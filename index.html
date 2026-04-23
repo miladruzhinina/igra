@@ -265,5 +265,69 @@
 
   <script src="images.js"></script>
   <script src="app.js"></script>
+
+  <script>
+// Перехватываем кнопку сохранения
+document.addEventListener('DOMContentLoaded', function() {
+    const saveBtn = document.querySelector('button[onclick="saveAnswers()"]');
+    
+    if (saveBtn) {
+        // Убираем старую функцию скачивания
+        saveBtn.removeAttribute('onclick');
+        
+        // Вешаем нашу новую функцию отправки в бота
+        saveBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // 1. Получаем ID клиента из ссылки Лидтеха
+            const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get('user_id');
+
+            if (!userId) {
+                alert("Пожалуйста, откройте игру через чат-бота для сохранения результатов.");
+                return;
+            }
+
+            // 2. Меняем текст кнопки
+            const originalText = saveBtn.innerHTML;
+            saveBtn.innerHTML = "Сохраняем...";
+            saveBtn.disabled = true;
+
+            // 3. Собираем текст из финального экрана
+            const microstepText = document.getElementById('final-microstep-text') ? 
+                                document.getElementById('final-microstep-text').innerText : "Не указан";
+            
+            const resultText = "Мой микро-шаг из игры:\n" + microstepText;
+
+            // 4. Отправляем в Make.com (Используем вашу ссылку!)
+            fetch('https://hook.eu1.make.com/n34mfzbeq2w58quglpdrtuwu2r3y7urt', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userId: userId,
+                    text: resultText
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    saveBtn.innerHTML = "Отправлено в чат!";
+                    // Пытаемся закрыть Telegram WebApp, если открыто там
+                    if (window.Telegram && window.Telegram.WebApp) {
+                        window.Telegram.WebApp.close();
+                    }
+                } else {
+                    saveBtn.innerHTML = "Ошибка!";
+                    setTimeout(() => { saveBtn.innerHTML = originalText; saveBtn.disabled = false; }, 2000);
+                }
+            })
+            .catch(err => {
+                saveBtn.innerHTML = "Ошибка!";
+                setTimeout(() => { saveBtn.innerHTML = originalText; saveBtn.disabled = false; }, 2000);
+            });
+        });
+    }
+});
+</script>
+  
 </body>
 </html>
