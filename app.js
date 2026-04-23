@@ -505,6 +505,19 @@ function saveAnswers() {
     if (ans) text += `${labels[i]}\n${ans}\n\n`;
   });
 
+  // Отправка ответов в Лидтех боту
+  const userId = new URLSearchParams(window.location.search).get('user_id');
+  if (userId) {
+    fetch('https://app.leadteh.ru/api/v1/bots/856640/contacts/' + userId + '/send-message', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Api-Token': 'THk9lhwlGbXPhkQNZFB9GGDzECLQNCmCGgShZ6VmHOzoy6tF98aTsl4XTirX'
+      },
+      body: JSON.stringify({ text: text })
+    }).catch(function(e) { console.log('Leadteh send error:', e); });
+  }
+
   // В Telegram Mini App — используем window.Telegram.WebApp для отправки
   if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.sendData) {
     window.Telegram.WebApp.sendData(text);
