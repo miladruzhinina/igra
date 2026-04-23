@@ -502,40 +502,26 @@ function saveAnswers() {
 
   let text = '🌟 Игра «С тобой всё в порядке»\n\n';
   answers.forEach((ans, i) => {
-    if (ans) text += `${labels[i]}\n${ans}\n\n`;
+    if (ans) text += labels[i] + '\n' + ans + '\n\n';
   });
 
-  // Отправка ответов в Лидтех боту
+  // Сначала показываем экран — всегда, мгновенно
+  showSavedScreen();
+
+  // Фоном отправляем в Лидтех (не блокирует экран)
   const userId = new URLSearchParams(window.location.search).get('user_id');
   if (userId) {
-    fetch('https://app.leadteh.ru/api/v1/bots/856640/contacts/' + userId + '/send-message', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Api-Token': 'THk9lhwlGbXPhkQNZFB9GGDzECLQNCmCGgShZ6VmHOzoy6tF98aTsl4XTirX'
-      },
-      body: JSON.stringify({ text: text })
-    }).catch(function(e) { console.log('Leadteh send error:', e); });
+    setTimeout(function() {
+      fetch('https://app.leadteh.ru/api/v1/bots/856640/contacts/' + userId + '/send-message', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Api-Token': 'THk9lhwlGbXPhkQNZFB9GGDzECLQNCmCGgShZ6VmHOzoy6tF98aTsl4XTirX'
+        },
+        body: JSON.stringify({ text: text })
+      }).catch(function(e) { console.log('Leadteh error:', e); });
+    }, 300);
   }
-
-  // В Telegram Mini App — используем window.Telegram.WebApp для отправки
-  if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.sendData) {
-    window.Telegram.WebApp.sendData(text);
-  } else {
-    // Fallback — скачать как текстовый файл
-    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'moi-otvety-igra.txt';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }
-
-  // Показываем подтверждение
-  showSavedScreen();
 }
 
 function showSavedScreen() {
