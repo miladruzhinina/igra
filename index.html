@@ -299,35 +299,26 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const resultText = "Мой микро-шаг из игры:\n" + microstepText;
 
-            // 4. Отправляем в Make.com (Используем вашу ссылку!)
+             // 4. Отправляем в Make.com
             fetch('https://hook.eu1.make.com/n34mfzbeq2w58quglpdrtuwu2r3y7urt', {
                 method: 'POST',
+                mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     userId: userId,
                     text: resultText
                 })
             })
-            .then(response => {
-                if (response.ok) {
-                    saveBtn.innerHTML = "Отправлено в чат!";
-                    // Пытаемся закрыть Telegram WebApp, если открыто там
-                    if (window.Telegram && window.Telegram.WebApp) {
-                        window.Telegram.WebApp.close();
-                    }
-                } else {
-                    saveBtn.innerHTML = "Ошибка!";
-                    setTimeout(() => { saveBtn.innerHTML = originalText; saveBtn.disabled = false; }, 2000);
+            .then(() => {
+                saveBtn.innerHTML = "Отправлено в чат!";
+                if (window.Telegram && window.Telegram.WebApp) {
+                    window.Telegram.WebApp.close();
                 }
-            })
-            .catch(err => {
-                saveBtn.innerHTML = "Ошибка!";
-                setTimeout(() => { saveBtn.innerHTML = originalText; saveBtn.disabled = false; }, 2000);
             });
         });
+           });
     }
 });
 </script>
-  
 </body>
 </html>
